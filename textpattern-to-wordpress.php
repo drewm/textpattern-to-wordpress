@@ -22,15 +22,15 @@ include('textpattern/config.php');
 $dsn = 'mysql:dbname='.$txpcfg['db'].';host='.(isset($txpcfg['host']) ? $txpcfg['host'] : '127.0.0.1');
 
 try {
-    $Connection = new PDO($dsn, $txpcfg['user'], $txpcfg['pass'], array(1002 => "SET NAMES '".$txpcfg['dbcharset']."'"));
+	$Connection = new PDO($dsn, $txpcfg['user'], $txpcfg['pass'], array(1002 => "SET NAMES '".$txpcfg['dbcharset']."'"));
 } catch (PDOException $e) {
-    die('Connection failed: ' . $e->getMessage());
+	die('Connection failed: ' . $e->getMessage());
 }
 
 define('EOL', "\n");
 
 header("Content-Type: text/xml; charset=UTF-8", true);
-header("Content-Disposition: attachment; filename=\"texpattern-export.xml\"", true);
+header("Content-Disposition: attachment; filename=\"textpattern-export.xml\"", true);
 
 
 
@@ -55,11 +55,11 @@ if ($result) {
 		foreach($prefs as $pref) {
 			switch($pref['name']) {
 				case 'sitename':
-					echo '<title>'.$pref['val'].'</title>'.EOL;
+					echo '<title>'.txpspecialchars($pref['val']).'</title>'.EOL;
 					break;
 
 				case 'site_slogan':
-					echo '<description>'.$pref['val'].'</description>'.EOL;
+					echo '<description>'.txpspecialchars($pref['val']).'</description>'.EOL;
 					break;
 
 				case 'siteurl':
@@ -99,7 +99,7 @@ if ($result) {
 		foreach($users as $user) {
 			echo '<wp:author>'.EOL;
 			echo '<wp:author_id>'.$user['user_id'].'</wp:author_id>'.EOL;
-			echo '<wp:author_login>'.$user['name'].'</wp:author_login>'.EOL;
+			echo '<wp:author_login>'.txpspecialchars($user['name']).'</wp:author_login>'.EOL;
 			echo '<wp:author_email>'.$user['email'].'</wp:author_email>'.EOL;
 			echo '<wp:author_display_name><![CDATA['.$user['RealName'].']]></wp:author_display_name>'.EOL;
 			$parts = explode(' ', $user['RealName'], 2);
@@ -135,32 +135,32 @@ try {
 	$Statement = $Connection->query($sql);
 	$result = $Statement->setFetchMode(PDO::FETCH_ASSOC);
 	while ($row = $Statement->fetch()) {
-		
+
 		$article_time = strtotime($row['Posted']);
 
 		echo '<item>'.EOL;
-		echo '<title>'.$row['Title'].'</title>'.EOL;
+		echo '<title>'.escape_title($row['Title']).'</title>'.EOL;
 
 		switch ($permlink_mode) {
 			case 'section_id_title':
 				$url = $siteurl.$row['Section'].'/'.$row['ID'].'/'.$row['url_title'];
-			break;
+				break;
 
 			case 'year_month_day_title':
 				$url = $siteurl.date('Y/m/d', $article_time).'/'.$row['url_title'];
-			break;
+				break;
 
 			case 'section_title':
 				$url = $siteurl.$row['Section'].'/'.$row['url_title'];
-			break;
+				break;
 
 			case 'title_only':
 				$url = $siteurl.$row['url_title'];
-			break;
+				break;
 
 			case 'id_title':
 				$url = $siteurl.$row['ID'].'/'.$row['url_title'];
-			break;
+				break;
 		}
 
 		echo '<link>'.$url.'</link>'.EOL;
@@ -169,8 +169,8 @@ try {
 		echo '<dc:creator>'.$row['AuthorID'].'</dc:creator>'.EOL;
 		echo '<guid isPermaLink="false">'.$url.'</guid>'.EOL;
 		echo '<description></description>'.EOL;
-		echo '<content:encoded><![CDATA['.$row['Body'].']]></content:encoded>'.EOL;
-		echo '<excerpt:encoded><![CDATA['.$row['Excerpt'].']]></excerpt:encoded>'.EOL;
+		echo '<content:encoded><![CDATA['.$row['Body_html'].']]></content:encoded>'.EOL;
+		echo '<excerpt:encoded><![CDATA['.$row['Excerpt_html'].']]></excerpt:encoded>'.EOL;
 		echo '<wp:post_id>'.$row['ID'].'</wp:post_id>'.EOL;
 		echo '<wp:post_date>'.$row['Posted'].'</wp:post_date>'.EOL;
 		echo '<wp:post_date_gmt>'.$row['Posted'].'</wp:post_date_gmt>'.EOL;
@@ -182,7 +182,7 @@ try {
 		echo '<wp:menu_order>0</wp:menu_order>'.EOL;
 		echo '<wp:post_type>post</wp:post_type>'.EOL;
 		echo '<wp:post_password></wp:post_password>'.EOL;
-		echo '<wp:is_sticky>0</wp:is_sticky>'.EOL;
+		echo '<wp:is_sticky>'.(int)($row['Status'] == 5).'</wp:is_sticky>'.EOL;
 
 		if ($row['Category1']!='') {
 			echo '<category domain="category" nicename="'.$row['Category1'].'"><![CDATA['.$cat_titles[$row['Category1']].']]></category>'.EOL;
@@ -205,7 +205,7 @@ try {
 			echo '<wp:comment_id>'.$comment['discussid'].'</wp:comment_id>'.EOL;
 			echo '<wp:comment_author><![CDATA['.$comment['name'].']]></wp:comment_author>'.EOL;
 			echo '<wp:comment_author_email>'.$comment['email'].'</wp:comment_author_email>'.EOL;
-			echo '<wp:comment_author_url>http://'.$comment['web'].'</wp:comment_author_url>'.EOL;
+			echo '<wp:comment_author_url>http://'.txpspecialchars($comment['web']).'</wp:comment_author_url>'.EOL;
 			echo '<wp:comment_author_IP>'.$comment['ip'].'</wp:comment_author_IP>'.EOL;
 			echo '<wp:comment_date>'.$comment['posted'].'</wp:comment_date>'.EOL;
 			echo '<wp:comment_date_gmt>'.$comment['posted'].'</wp:comment_date_gmt>'.EOL;
@@ -218,7 +218,7 @@ try {
 		}
 
 
-		
+
 		echo '</item>'.EOL;
 		flush();
 
@@ -231,21 +231,36 @@ echo '</channel>
 </rss>';
 
 
-function fix_encoded_mess($str) 
+function fix_encoded_mess($str)
 {
 	$find = array(
-			'â€™',
-			'â€˜',
-			'â€œ',
-			'â€',
-		);
+		'â€™',
+		'â€˜',
+		'â€œ',
+		'â€',
+	);
 
 	$replace = array(
-			"'",
-			"'",
-			'"',
-			'"',
-		);
+		"’",
+		"‘",
+		'“',
+		'”',
+	);
 
 	return str_replace($find, $replace, $str);
+}
+
+function txpspecialchars($string, $flags = ENT_QUOTES, $encoding = 'UTF-8', $double_encode = true)
+{
+	return htmlspecialchars($string, $flags, $encoding, $double_encode);
+}
+
+function escape_title($title)
+{
+	return strtr($title, array(
+		'<' => '&#60;',
+		'>' => '&#62;',
+		"'" => '&#39;',
+		'"' => '&#34;',
+	));
 }

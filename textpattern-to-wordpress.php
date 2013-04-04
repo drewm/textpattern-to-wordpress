@@ -3,6 +3,9 @@
 // Include your TXP config file:
 include('textpattern/config.php');
 
+// Do you want to export HTML (for WordPress, default) or raw Textile formatting?
+$export_html = true;
+
 
 /* ==============================================================================================================
 
@@ -169,8 +172,15 @@ try {
 		echo '<dc:creator>'.$row['AuthorID'].'</dc:creator>'.EOL;
 		echo '<guid isPermaLink="false">'.$url.'</guid>'.EOL;
 		echo '<description></description>'.EOL;
-		echo '<content:encoded><![CDATA['.$row['Body_html'].']]></content:encoded>'.EOL;
-		echo '<excerpt:encoded><![CDATA['.$row['Excerpt_html'].']]></excerpt:encoded>'.EOL;
+
+		if ($export_html) {
+			echo '<content:encoded><![CDATA['.$row['Body_html'].']]></content:encoded>'.EOL;
+			echo '<excerpt:encoded><![CDATA['.$row['Excerpt_html'].']]></excerpt:encoded>'.EOL;
+		}else{
+			echo '<content:encoded><![CDATA['.$row['Body'].']]></content:encoded>'.EOL;
+			echo '<excerpt:encoded><![CDATA['.$row['Excerpt'].']]></excerpt:encoded>'.EOL;
+		}
+		
 		echo '<wp:post_id>'.$row['ID'].'</wp:post_id>'.EOL;
 		echo '<wp:post_date>'.$row['Posted'].'</wp:post_date>'.EOL;
 		echo '<wp:post_date_gmt>'.$row['Posted'].'</wp:post_date_gmt>'.EOL;

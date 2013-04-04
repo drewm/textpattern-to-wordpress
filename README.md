@@ -15,3 +15,12 @@ Requirements
 * PHP
 * PDO-mysql
 * A strong stomach
+
+Configuration
+-------------
+
+At the top of the file you can tweak two settings:
+
+* The include path to your TXP config file
+* The `$export_html` setting. By default this is true, and posts are exported as HTML. Set to `false` to export as raw Textile.
+

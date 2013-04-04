@@ -89,7 +89,7 @@ if ($result) {
 }
 
 echo '<wp:wxr_version>1.1</wp:wxr_version>'.EOL;
-echo '<generator>https://github.com/drewm</generator>'.EOL; // lies! it's all lies!
+echo '<generator>https://github.com/drewm/textpattern-to-wordpress</generator>'.EOL;
 
 
 /* ======= AUTHORS ======== */

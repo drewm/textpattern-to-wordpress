@@ -248,6 +248,7 @@ function fix_encoded_mess($str)
 		'â€˜',
 		'â€œ',
 		'â€',
+		'Â£',
 	);
 
 	$replace = array(
@@ -255,6 +256,7 @@ function fix_encoded_mess($str)
 		"‘",
 		'“',
 		'”',
+		'£',
 	);
 
 	return str_replace($find, $replace, $str);

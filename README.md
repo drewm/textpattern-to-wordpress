@@ -7,12 +7,12 @@ Connects your TXP database tables and creates a WP-style extended RSS file. This
 
 Put the `textpattern-to-wordpress.php` file in your Textpattern site, at the same level as the textpattern folder (usually root), then load it up in your web browser.
 
-This isn't pretty.
+This isn't pretty, but it works well.
 
 Requirements
 ------------
 
-* PHP
+* PHP 5.2
 * PDO-mysql
 * A strong stomach
 

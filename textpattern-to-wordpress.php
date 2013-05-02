@@ -3,7 +3,7 @@
 // Include your TXP config file:
 include('textpattern/config.php');
 
-// Do you want to export HTML (for WordPress, default) or raw Textile formatting?
+// Do you want to export HTML (for WordPress, default true) or raw Textile formatting (false)?
 $export_html = true;
 
 
@@ -37,7 +37,7 @@ header("Content-Disposition: attachment; filename=\"textpattern-export.xml\"", t
 
 
 
-echo '<?xml version="1.0" encoding="utf-8" ?>
+echo '<'.'?xml version="1.0" encoding="utf-8" ?'.'>
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/1.1/excerpt/"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"

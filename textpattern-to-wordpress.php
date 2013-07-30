@@ -22,10 +22,13 @@ $export_html = true;
 ================================================================================================================= */
 
 
-$dsn = 'mysql:dbname='.$txpcfg['db'].';host='.(isset($txpcfg['host']) ? $txpcfg['host'] : '127.0.0.1');
+$dsn  = 'mysql:dbname='.$txpcfg['db'].';host='.(isset($txpcfg['host']) ? $txpcfg['host'] : '127.0.0.1');
+
+$opts = array();
+if (isset($txpcfg['dbcharset'])) $opts = array(1002 => "SET NAMES '".$txpcfg['dbcharset']."'");
 
 try {
-	$Connection = new PDO($dsn, $txpcfg['user'], $txpcfg['pass'], array(1002 => "SET NAMES '".$txpcfg['dbcharset']."'"));
+	$Connection = new PDO($dsn, $txpcfg['user'], $txpcfg['pass'], $opts);
 } catch (PDOException $e) {
 	die('Connection failed: ' . $e->getMessage());
 }

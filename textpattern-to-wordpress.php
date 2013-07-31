@@ -214,11 +214,16 @@ try {
 		$result = $Statement2->setFetchMode(PDO::FETCH_ASSOC);
 		while ($comment = $Statement2->fetch()) {
 
+			$comment_web = txpspecialchars($comment['web']);
+			if (substr($comment_web, 0, 4) != 'http') {
+				$comment_web = 'http://'.$comment_web;
+			}
+
 			echo '<wp:comment>'.EOL;
 			echo '<wp:comment_id>'.$comment['discussid'].'</wp:comment_id>'.EOL;
 			echo '<wp:comment_author><![CDATA['.$comment['name'].']]></wp:comment_author>'.EOL;
 			echo '<wp:comment_author_email>'.$comment['email'].'</wp:comment_author_email>'.EOL;
-			echo '<wp:comment_author_url>http://'.txpspecialchars($comment['web']).'</wp:comment_author_url>'.EOL;
+			echo '<wp:comment_author_url>'.$comment_web.'</wp:comment_author_url>'.EOL;
 			echo '<wp:comment_author_IP>'.$comment['ip'].'</wp:comment_author_IP>'.EOL;
 			echo '<wp:comment_date>'.$comment['posted'].'</wp:comment_date>'.EOL;
 			echo '<wp:comment_date_gmt>'.$comment['posted'].'</wp:comment_date_gmt>'.EOL;

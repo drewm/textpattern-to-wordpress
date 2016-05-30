@@ -183,6 +183,8 @@ try {
 			echo '<content:encoded><![CDATA['.$row['Body'].']]></content:encoded>'.EOL;
 			echo '<excerpt:encoded><![CDATA['.$row['Excerpt'].']]></excerpt:encoded>'.EOL;
 		}
+
+		echo '<tags>'.$row['Keywords'].'</tags>'.EOL;
 		
 		echo '<wp:post_id>'.$row['ID'].'</wp:post_id>'.EOL;
 		echo '<wp:post_date>'.$row['Posted'].'</wp:post_date>'.EOL;
